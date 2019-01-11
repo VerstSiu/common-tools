@@ -1,0 +1,14 @@
+
+# gradle config files
+.gradle/
+
+# IDEA config files
+.idea/libraries
+.idea/modules
+.idea/*.*
+
+# generated directories
+build/
+out/
+
+*.iml
