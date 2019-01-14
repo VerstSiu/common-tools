@@ -56,6 +56,13 @@ class JsonTextBuilder private  constructor() {
   }
 
   /**
+   * Append boolean [value]
+   */
+  fun boolean(value: Boolean) {
+    sb.append(value.toString())
+  }
+
+  /**
    * Append json object with construct [func]
    */
   fun json(func: JsonTextBuilder.() -> Unit) {
@@ -113,6 +120,14 @@ class JsonTextBuilder private  constructor() {
   fun nextNumberText(value: String) {
     sb.nextItem()
     numberText(value)
+  }
+
+  /**
+   * Append next boolean [value]
+   */
+  fun nextBoolean(value: Boolean) {
+    sb.nextItem()
+    boolean(value)
   }
 
   /**
@@ -174,6 +189,17 @@ class JsonTextBuilder private  constructor() {
       .nextValue()
 
     numberText(value)
+  }
+
+  /**
+   * Append boolean [value] with [key]
+   */
+  fun boolean(key: String, value: Boolean) {
+    sb
+      .appendQuoteText(key)
+      .nextValue()
+
+    boolean(value)
   }
 
   /**
@@ -243,6 +269,18 @@ class JsonTextBuilder private  constructor() {
       .nextValue()
 
     numberText(value)
+  }
+
+  /**
+   * Append next boolean [value] with [key]
+   */
+  fun nextBoolean(key: String, value: Boolean) {
+    sb
+      .nextItem()
+      .appendQuoteText(key)
+      .nextValue()
+
+    boolean(value)
   }
 
   /**

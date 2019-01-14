@@ -79,6 +79,14 @@ class JsonTextBuilderTest {
   }
 
   @Test
+  fun testPureBoolean() {
+    val result = JsonTextBuilder.jsonArray {
+      boolean(true)
+    }
+    assert(result == "[true]")
+  }
+
+  @Test
   fun testPureChildJson() {
     val result = JsonTextBuilder.json {
       json {
@@ -151,6 +159,15 @@ class JsonTextBuilderTest {
   }
 
   @Test
+  fun testPureNextBoolean() {
+    val result = JsonTextBuilder.jsonArray {
+      number(1)
+      nextBoolean(true)
+    }
+    assert(result == "[1,true]")
+  }
+
+  @Test
   fun testPureNextChildJson() {
     val result = JsonTextBuilder.jsonArray {
       number(1)
@@ -217,6 +234,14 @@ class JsonTextBuilderTest {
       numberText("age", "0.000000000001")
     }
     assert(result == "{\"age\":0.000000000001}")
+  }
+
+  @Test
+  fun testPairBoolean() {
+    val result = JsonTextBuilder.json {
+      boolean("active", true)
+    }
+    assert(result == "{\"active\":true}")
   }
 
   @Test
@@ -287,6 +312,15 @@ class JsonTextBuilderTest {
       nextNumberText("age", "0.000000000001")
     }
     assert(result == "{\"age\":1,\"age\":0.000000000001}")
+  }
+
+  @Test
+  fun testPairNextBoolean() {
+    val result = JsonTextBuilder.json {
+      number("age", 1)
+      nextBoolean("active", true)
+    }
+    assert(result == "{\"age\":1,\"active\":true}")
   }
 
   @Test

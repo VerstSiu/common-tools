@@ -17,55 +17,58 @@ Kotlin based common tools.
 
 * Json text builder:
 
-    - Api list:
+    Start text building with `JsonTextBuilder.json` or `JsonTextBuilder.jsonArray` and build `json/jsonArray` content with following apis.
+
+    - Raw values:
 
         ```kotlin
-        class JsonTextBuilder {
-          fun text([key: String, ]value: String?)
-          fun number([key: String, ]value: Number)
-          fun numberText([key: String, ]value: String)
-          fun json([key: String, ]func: JsonTextBuilder.() -> Unit)
-          fun jsonArray([key: String, ]func: JsonTextBuilder.() -> Unit)
-          fun <T> jsonArray([key: String, ]items: Collection<T>, func: JsonTextBuilder.(T) -> Unit)
-
-          fun nextText([key: String, ]value: String?)
-          fun nextNumber([key: String, ]value: Number)
-          fun nextNumberText([key: String, ]value: String)
-          fun nextJson([key: String, ]func: JsonTextBuilder.() -> Unit)
-          fun nextJsonArray([key: String, ]func: JsonTextBuilder.() -> Unit)
-          fun <T> nextJsonArray([key: String, ]items: Collection<T>, func: JsonTextBuilder.(T) -> Unit)
-
-          companion object {
-            fun json(func: JsonTextBuilder.() -> Unit): String
-            fun jsonArray(func: JsonTextBuilder.() -> Unit): String
-            fun <T> jsonArray(items: Collection<T>, func: JsonTextBuilder.(T) -> Unit): String
-          }
-        }
+        text("Tony") // \"Tony\"
+        number(1) // 1
+        numberText("0.00001") // 0.00001
+        boolean(true) // true
         ```
 
-    - Simple json:
+    - Wrap with keys:
 
         ```kotlin
-        JsonTextBuilder.json {
+        text("name", "Tony") // \"name\":\"Tony\"
+        ```
+
+    - Wrap as next item:
+
+        ```kotlin
+        nextText("Tony") // ,\"Tony\"
+        ```
+
+    - Wrap with keys as next item:
+
+        ```kotlin
+        nextText("name", "Tony") // ,\"name\":\"Tony\"
+        ```
+
+    - Wrap as json object:
+
+        ```kotlin
+        json {
           text("name", "Tony")
           nextNumber("age", 11)
         }
-        // {\"name\":\"Tony\",\"age\":11}
+        // {\"name\":\"Tony\",\"age\",11}
         ```
 
-    - Simple json array:
+    - Wrap as json array:
 
         ```kotlin
-        JsonTextBuilder.json {
+        jsonArray {
           jsonArray("fruits", listOf("apple", "pear", "orange")) { text(it) }
         }
         // {\"fruits\":[\"apple\",\"pear\",\"orange\"]}
         ```
 
-    - custom json array:
+    - Wrap as custom json array:
 
         ```kotlin
-        JsonTextBuilder.json {
+        jsonArray {
           jsonArray("info") {
             text("Tony")
             nextNumber(1)
