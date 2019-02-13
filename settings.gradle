@@ -1,2 +1,3 @@
 rootProject.name = 'common-tools'
+include 'jackson'
 include 'tools'
