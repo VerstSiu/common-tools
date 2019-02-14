@@ -24,7 +24,7 @@ import java.lang.StringBuilder
  *
  * @author verstsiu created at 2018-01-11 16:27
  */
-class JsonTextBuilder private  constructor() {
+class JsonTextBuilder private constructor() {
 
   private val sb = StringBuilder()
 
@@ -33,9 +33,11 @@ class JsonTextBuilder private  constructor() {
   /**
    * Append text [value]
    */
-  fun text(value: String?) {
+  fun text(value: String?, skipNull: Boolean = false) {
     if (value == null) {
-      sb.append("null")
+      if (!skipNull) {
+        sb.append("null")
+      }
     } else {
       sb.appendQuoteText(value)
     }
@@ -101,9 +103,12 @@ class JsonTextBuilder private  constructor() {
   /**
    * Append next text [value]
    */
-  fun nextText(value: String?) {
+  fun nextText(value: String?, skipNull: Boolean = false) {
+    if (skipNull && value == null) {
+      return
+    }
     sb.nextItem()
-    text(value)
+    text(value, skipNull = false)
   }
 
   /**
@@ -161,12 +166,15 @@ class JsonTextBuilder private  constructor() {
   /**
    * Append text [value] with [key]
    */
-  fun text(key: String, value: String?) {
+  fun text(key: String, value: String?, skipNull: Boolean = false) {
+    if (skipNull && value == null) {
+      return
+    }
     sb
       .appendQuoteText(key)
       .nextValue()
 
-    text(value)
+    text(value, skipNull = false)
   }
 
   /**
@@ -238,13 +246,16 @@ class JsonTextBuilder private  constructor() {
   /**
    * Append next text [value] with [key]
    */
-  fun nextText(key: String, value: String?) {
+  fun nextText(key: String, value: String?, skipNull: Boolean = false) {
+    if (skipNull && value == null) {
+      return
+    }
     sb
       .nextItem()
       .appendQuoteText(key)
       .nextValue()
 
-    text(value)
+    text(value, skipNull = false)
   }
 
   /**
