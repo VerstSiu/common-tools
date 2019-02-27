@@ -101,6 +101,27 @@ class JsonTextBuilder private constructor() {
   }
 
   /**
+   * Append json array (checked) with [items] and construct [func]
+   */
+  fun <T> jsonArrayChecked(items: Collection<T>?, func: JsonTextBuilder.(T) -> Boolean) {
+    sb.append("[")
+
+    var itemIndex = 0
+
+    items?.forEach {
+      if (itemIndex > 0) {
+        sb.nextItem()
+      }
+
+      if (func.invoke(this, it)) {
+        ++itemIndex
+      }
+    }
+
+    sb.append("]")
+  }
+
+  /**
    * Append next text [value]
    */
   fun nextText(value: String?, skipNull: Boolean = false) {
@@ -157,6 +178,14 @@ class JsonTextBuilder private constructor() {
   fun nextJsonArray(func: JsonTextBuilder.() -> Unit) {
     sb.nextItem()
     jsonArray(func)
+  }
+
+  /**
+   * Append next json array (checked) with [items] and construct [func]
+   */
+  fun <T> nextJsonArrayChecked(items: Collection<T>?, func: JsonTextBuilder.(T) -> Boolean) {
+    sb.nextItem()
+    jsonArrayChecked(items, func)
   }
 
   /* -- json array root methods :end -- */
@@ -307,15 +336,15 @@ class JsonTextBuilder private constructor() {
   }
 
   /**
-   * Append next json array with [key], [items] and construct [func]
+   * Append next json array (checked) with [key], [items] and construct [func]
    */
-  fun <T> nextJsonArray(key: String, items: Collection<T>?, func: JsonTextBuilder.(T) -> Unit) {
+  fun <T> nextJsonArrayChecked(key: String, items: Collection<T>?, func: JsonTextBuilder.(T) -> Boolean) {
     sb
       .nextItem()
       .appendQuoteText(key)
       .nextValue()
 
-    jsonArray(items, func)
+    jsonArrayChecked(items, func)
   }
 
   /**
@@ -328,6 +357,18 @@ class JsonTextBuilder private constructor() {
       .nextValue()
 
     jsonArray(func)
+  }
+
+  /**
+   * Append next json array with [key], [items] and construct [func]
+   */
+  fun <T> nextJsonArray(key: String, items: Collection<T>?, func: JsonTextBuilder.(T) -> Unit) {
+    sb
+      .nextItem()
+      .appendQuoteText(key)
+      .nextValue()
+
+    jsonArray(items, func)
   }
 
   /* -- json object root methods :begin -- */
@@ -379,6 +420,16 @@ class JsonTextBuilder private constructor() {
     fun jsonArray(func: JsonTextBuilder.() -> Unit): String {
       return JsonTextBuilder()
         .apply { jsonArray(func) }
+        .toString()
+    }
+
+    /**
+     * Returns builder instance to create json array text (checked)
+     */
+    @JvmStatic
+    fun <T> jsonArrayChecked(items: Collection<T>?, func: JsonTextBuilder.(T) -> Boolean): String {
+      return JsonTextBuilder()
+        .apply { jsonArrayChecked(items, func) }
         .toString()
     }
   }
