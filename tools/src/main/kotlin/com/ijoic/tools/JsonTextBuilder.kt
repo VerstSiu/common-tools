@@ -113,8 +113,9 @@ class JsonTextBuilder private constructor() {
         sb.nextItem()
       }
 
-      if (func.invoke(this, it)) {
-        ++itemIndex
+      when {
+        func.invoke(this, it) -> ++itemIndex
+        itemIndex > 0 -> sb.cancelNextItem()
       }
     }
 
@@ -386,6 +387,10 @@ class JsonTextBuilder private constructor() {
 
   private fun StringBuilder.nextItem(): StringBuilder {
     return this.append(",")
+  }
+
+  private fun StringBuilder.cancelNextItem(): StringBuilder {
+    return this.deleteCharAt(this.length - 1)
   }
 
   private fun StringBuilder.nextValue(): StringBuilder {
