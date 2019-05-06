@@ -1,0 +1,102 @@
+/*
+ *
+ *  Copyright(c) 2019 VerstSiu
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+package com.ijoic.tools
+
+/**
+ * Time tracker
+ *
+ * @author verstsiu created at 2019-05-06 11:40
+ */
+class TimeTracker(private val getCurrTime: () -> Long) {
+
+  private var currTag: String? = null
+  private val startMsMap = mutableMapOf<String, Long>()
+  private val endMsMap = mutableMapOf<String, Long>()
+
+  /**
+   * Start a new time trace with [tag]
+   */
+  fun start(tag: String) {
+    val currTime = getCurrTime()
+    startMsMap[tag] = currTime
+  }
+
+  /**
+   * End time time trace with [tag]
+   */
+  fun end(tag: String) {
+    val currTime = getCurrTime()
+    endMsMap[tag] = currTime
+  }
+
+  /**
+   * End last time trace
+   */
+  fun endLast() {
+    val lastTag = currTag
+    currTag = null
+
+    if (lastTag != null) {
+      end(lastTag)
+    }
+  }
+
+  /**
+   * End last time trace and start a new time trace with [tag]
+   */
+  fun next(tag: String) {
+    endLast()
+    start(tag)
+  }
+
+  /**
+   * Print elapsed info with [message] and [tags]
+   */
+  fun printElapsed(message: String, vararg tags: String) {
+    val elapsedMsItems = tags.mapNotNull {
+      val startMs = startMsMap[it]
+      val endMs = endMsMap[it]
+
+      if (startMs == null || endMs == null) {
+        null
+      } else {
+        endMs - startMs
+      }
+    }
+
+    if (elapsedMsItems.isEmpty()) {
+      return
+    }
+    val totalMs = elapsedMsItems.sum()
+
+    if (elapsedMsItems.size == 1) {
+      println("$message elapsed ms: $totalMs")
+    } else {
+      println("$message elapsed ms: $totalMs (${elapsedMsItems.joinToString("/")})")
+    }
+  }
+
+  /**
+   * Clear saved trace info
+   */
+  fun clear() {
+    currTag = null
+    startMsMap.clear()
+    endMsMap.clear()
+  }
+}
