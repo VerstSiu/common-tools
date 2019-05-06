@@ -32,39 +32,43 @@ class TimeTracker(private val getCurrTime: () -> Long = { System.currentTimeMill
   /**
    * Start a new time trace with [tag]
    */
-  fun start(tag: String) {
+  fun start(tag: String): TimeTracker {
     val currTime = getCurrTime()
     startMsMap[tag] = currTime
     tagItems.add(tag)
     currTag = tag
+    return this
   }
 
   /**
    * End time time trace with [tag]
    */
-  fun end(tag: String) {
+  fun end(tag: String): TimeTracker {
     val currTime = getCurrTime()
     endMsMap[tag] = currTime
+    return this
   }
 
   /**
    * End last time trace
    */
-  fun end() {
+  fun end(): TimeTracker {
     val lastTag = currTag
     currTag = null
 
     if (lastTag != null) {
       end(lastTag)
     }
+    return this
   }
 
   /**
    * End last time trace and start a new time trace with [tag]
    */
-  fun next(tag: String) {
+  fun next(tag: String): TimeTracker {
     end()
     start(tag)
+    return this
   }
 
   /**
