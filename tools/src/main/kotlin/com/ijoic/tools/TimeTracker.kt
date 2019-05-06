@@ -36,6 +36,7 @@ class TimeTracker(private val getCurrTime: () -> Long = { System.currentTimeMill
     val currTime = getCurrTime()
     startMsMap[tag] = currTime
     tagItems.add(tag)
+    currTag = tag
   }
 
   /**
@@ -49,7 +50,7 @@ class TimeTracker(private val getCurrTime: () -> Long = { System.currentTimeMill
   /**
    * End last time trace
    */
-  fun endLast() {
+  fun end() {
     val lastTag = currTag
     currTag = null
 
@@ -62,24 +63,52 @@ class TimeTracker(private val getCurrTime: () -> Long = { System.currentTimeMill
    * End last time trace and start a new time trace with [tag]
    */
   fun next(tag: String) {
-    endLast()
+    end()
     start(tag)
+  }
+
+  /**
+   * Returns elapsed ms with [tag]
+   */
+  fun getElapsedMs(tag: String): Long? {
+    val startMs = startMsMap[tag]
+    val endMs = endMsMap[tag]
+
+    return if (startMs == null || endMs == null) {
+      null
+    } else {
+      endMs - startMs
+    }
+  }
+
+  /**
+   * Returns elapsed ms with [tags]
+   */
+  fun getElapsedMsInfo(vararg tags: String): List<ElapsedInfo> {
+    return tags.mapNotNull { tag ->
+      getElapsedMs(tag)?.let { ElapsedInfo(tag, it) }
+    }
+  }
+
+  /**
+   * Returns elapsed ms all
+   */
+  fun getElapsedMsAll(): Long? {
+    val tags = tagItems.toTypedArray()
+    val items = getElapsedMsInfo(*tags)
+
+    if (items.isEmpty()) {
+      return null
+    }
+    return items.map { it.elapsedMs }.sum()
   }
 
   /**
    * Print elapsed info with [message] and [tags]
    */
   fun printElapsed(message: String, vararg tags: String) {
-    val elapsedMsItems = tags.mapNotNull {
-      val startMs = startMsMap[it]
-      val endMs = endMsMap[it]
-
-      if (startMs == null || endMs == null) {
-        null
-      } else {
-        endMs - startMs
-      }
-    }
+    val elapsedMsItems = getElapsedMsInfo(*tags)
+      .map { it.elapsedMs }
 
     if (elapsedMsItems.isEmpty()) {
       return
@@ -110,4 +139,9 @@ class TimeTracker(private val getCurrTime: () -> Long = { System.currentTimeMill
     startMsMap.clear()
     endMsMap.clear()
   }
+
+  /**
+   * Elapsed info
+   */
+  data class ElapsedInfo(val tag: String, val elapsedMs: Long)
 }
