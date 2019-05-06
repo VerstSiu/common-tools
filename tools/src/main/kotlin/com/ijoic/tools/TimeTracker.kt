@@ -22,9 +22,10 @@ package com.ijoic.tools
  *
  * @author verstsiu created at 2019-05-06 11:40
  */
-class TimeTracker(private val getCurrTime: () -> Long) {
+class TimeTracker(private val getCurrTime: () -> Long = { System.currentTimeMillis() }) {
 
   private var currTag: String? = null
+  private val tagItems = mutableSetOf<String>()
   private val startMsMap = mutableMapOf<String, Long>()
   private val endMsMap = mutableMapOf<String, Long>()
 
@@ -34,6 +35,7 @@ class TimeTracker(private val getCurrTime: () -> Long) {
   fun start(tag: String) {
     val currTime = getCurrTime()
     startMsMap[tag] = currTime
+    tagItems.add(tag)
   }
 
   /**
@@ -92,10 +94,19 @@ class TimeTracker(private val getCurrTime: () -> Long) {
   }
 
   /**
+   * Print elapsed info all with [message]
+   */
+  fun printElapsedAll(message: String) {
+    val tags = tagItems.toTypedArray()
+    printElapsed(message, *tags)
+  }
+
+  /**
    * Clear saved trace info
    */
   fun clear() {
     currTag = null
+    tagItems.clear()
     startMsMap.clear()
     endMsMap.clear()
   }
