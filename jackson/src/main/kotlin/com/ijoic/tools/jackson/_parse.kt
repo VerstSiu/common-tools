@@ -21,6 +21,16 @@ fun String.toJsonNodeOrNull(): JsonNode? {
 /* -- current node extensions :begin -- */
 
 /**
+ * Verify current node as boolean or null
+ */
+fun JsonNode.verifyAsBoolean(): Boolean? {
+  if (this.isNull || !this.isBoolean) {
+    return null
+  }
+  return this.asBoolean()
+}
+
+/**
  * Verify current node as string or null
  */
 fun JsonNode.verifyAsString(): String? {
@@ -66,6 +76,13 @@ fun JsonNode.verifyAsArray(): JsonNode? {
 /* -- current node extensions :end -- */
 
 /* -- field node extensions :begin -- */
+
+/**
+ * Verify [field] node as boolean or null
+ */
+fun JsonNode.verifyAsBoolean(field: String): Boolean? {
+  return get(field)?.verifyAsBoolean()
+}
 
 /**
  * Verify [field] node as string or null
