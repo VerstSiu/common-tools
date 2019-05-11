@@ -22,7 +22,7 @@ import java.lang.StringBuilder
 /**
  * Json text builder
  *
- * @author verstsiu created at 2018-01-11 16:27
+ * @author verstsiu created at 2019-01-11 16:27
  */
 class JsonTextBuilder private constructor() {
 

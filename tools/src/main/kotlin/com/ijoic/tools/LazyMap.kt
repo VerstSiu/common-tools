@@ -17,18 +17,31 @@
  */
 package com.ijoic.tools
 
-import kotlin.reflect.KMutableProperty0
-
 /**
- * Get or create(and cached) property value
+ * Lazy map
+ *
+ * Support operation of getOrCreateOnce
+ *
+ * @author verstsiu created at 2019-05-11 17:21
  */
-fun <T> KMutableProperty0<T?>.getOrCreate(onCreate: () -> T): T {
-  return get() ?: onCreate().also { set(it) }
-}
+class LazyMap<K, V>(private val source: MutableMap<K, V> = mutableMapOf()): MutableMap<K, V> by source {
 
-/**
- * Get or fill(and cached) property value
- */
-fun <T> KMutableProperty0<T?>.getOrFill(onCreate: () -> T?): T? {
-  return get() ?: onCreate()?.also { set(it) }
+  private val createdMap by lazy { mutableMapOf<K, Boolean>() }
+
+  /**
+   * Returns cached or first created field value(even if first create failed)
+   */
+  fun getOrCreateOnce(key: K, onCreate: () -> V?): V? {
+    if (createdMap[key] != true) {
+      createdMap[key] = true
+
+      val value = onCreate.invoke()
+
+      if (value != null) {
+        source[key] = value
+        return value
+      }
+    }
+    return source[key]
+  }
 }
