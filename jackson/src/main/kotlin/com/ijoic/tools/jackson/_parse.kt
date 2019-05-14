@@ -76,7 +76,7 @@ fun JsonNode.verifyAsArray(): JsonNode? {
 /**
  * Verify current node as items list
  */
-fun <T> JsonNode.verifyAsItemsList(mapValue: (JsonNode) -> T): List<T>? {
+fun <T> JsonNode.verifyAsItemsList(mapValue: (JsonNode) -> T?): List<T>? {
   if (!this.isArray) {
     return null
   }
@@ -138,7 +138,7 @@ fun JsonNode.verifyAsArray(field: String): JsonNode? {
 /**
  * Verify [field] node as items list
  */
-fun <T> JsonNode.verifyAsItemsList(field: String, mapValue: (JsonNode) -> T): List<T>? {
+fun <T> JsonNode.verifyAsItemsList(field: String, mapValue: (JsonNode) -> T?): List<T>? {
   return get(field)?.verifyAsItemsList(mapValue)
 }
 
