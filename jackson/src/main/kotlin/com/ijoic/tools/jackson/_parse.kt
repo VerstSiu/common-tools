@@ -73,6 +73,29 @@ fun JsonNode.verifyAsArray(): JsonNode? {
   return this
 }
 
+/**
+ * Verify current node as items list
+ */
+fun <T> JsonNode.verifyAsItemsList(mapValue: (JsonNode) -> T): List<T>? {
+  if (!this.isArray) {
+    return null
+  }
+  val itemSize = this.size().takeIf { it >= 0 } ?: return null
+  val items = mutableListOf<T>()
+
+  if (itemSize > 0) {
+    for (i in 0 until itemSize) {
+      val node = this.get(i)
+      val value = node?.let(mapValue)
+
+      if (value != null) {
+        items.add(value)
+      }
+    }
+  }
+  return items
+}
+
 /* -- current node extensions :end -- */
 
 /* -- field node extensions :begin -- */
@@ -110,6 +133,13 @@ fun JsonNode.verifyAsObject(field: String): JsonNode? {
  */
 fun JsonNode.verifyAsArray(field: String): JsonNode? {
   return get(field)?.verifyAsArray()
+}
+
+/**
+ * Verify [field] node as items list
+ */
+fun <T> JsonNode.verifyAsItemsList(field: String, mapValue: (JsonNode) -> T): List<T>? {
+  return get(field)?.verifyAsItemsList(mapValue)
 }
 
 /* -- field node extensions :end -- */
