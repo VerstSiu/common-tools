@@ -7,13 +7,15 @@ import java.lang.Exception
 /**
  * Parse current text to json node or null
  */
-fun String.toJsonNodeOrNull(): JsonNode? {
+fun String.toJsonNodeOrNull(ignoreError: Boolean = false): JsonNode? {
   val mapper = ObjectMapper()
 
   return try {
     mapper.readTree(this)
   } catch (e: Exception) {
-    e.printStackTrace()
+    if (!ignoreError) {
+      e.printStackTrace()
+    }
     null
   }
 }
