@@ -49,4 +49,14 @@ class LazyMap<K, V>(private val source: MutableMap<K, V> = mutableMapOf()): Muta
     createdMap.remove(key)
     return source.remove(key)
   }
+
+  override fun remove(key: K, value: V): Boolean {
+    createdMap.remove(key)
+    return source.remove(key, value)
+  }
+
+  override fun clear() {
+    createdMap.clear()
+    source.clear()
+  }
 }
