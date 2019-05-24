@@ -58,4 +58,70 @@ object DiffUtils {
       }
     }
   }
+
+  /**
+   * Apply update with item id
+   */
+  fun <T, R> applyUpdateWithItemId(
+    original: List<T>?,
+    patch: List<T>?,
+    getItemId: (T) -> R,
+    isItemEquals: (T, T) -> Boolean = { o1, o2 -> o1 == o2 },
+    onInsert: ((T) -> Unit)? = null,
+    onUpdate: ((T, T) -> Unit)? = null) {
+
+    // patch empty
+    if (patch.isNullOrEmpty()) {
+      return
+    }
+
+    // original empty
+    if (original.isNullOrEmpty()) {
+      if (onInsert != null) {
+        patch.forEach(onInsert)
+      }
+      return
+    }
+
+    // upgrade
+    val originalMap = original.associateBy(getItemId).toMutableMap()
+    val patchMap = patch.associateBy(getItemId)
+
+    for ((id, patchItem) in patchMap) {
+      val originalItem = originalMap[id]
+
+      if (originalItem == null) {
+        onInsert?.invoke(patchItem)
+      } else if (!isItemEquals(originalItem, patchItem)) {
+        onUpdate?.invoke(originalItem, patchItem)
+      }
+    }
+  }
+
+  /**
+   * Apply remove with item id
+   */
+  fun <T, R> applyRemoveWithItemId(
+    original: List<T>?,
+    patch: List<T>?,
+    getItemId: (T) -> R,
+    onRemove: (T) -> Unit) {
+
+    // patch or original empty
+    if (patch.isNullOrEmpty() || original.isNullOrEmpty()) {
+      return
+    }
+
+    // upgrade
+    val originalMap = original.associateBy(getItemId).toMutableMap()
+    val patchMap = patch.associateBy(getItemId)
+
+    for ((id, _) in patchMap) {
+      val originalItem = originalMap[id]
+
+      if (originalItem != null) {
+        onRemove.invoke(originalItem)
+      }
+    }
+  }
 }
