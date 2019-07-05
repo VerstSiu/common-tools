@@ -53,8 +53,14 @@ class JsonTextBuilder private constructor() {
   /**
    * Append number text [value]
    */
-  fun numberText(value: String) {
-    sb.append(value)
+  fun numberText(value: String?, skipNull: Boolean = false) {
+    if (value == null) {
+      if (!skipNull) {
+        sb.append("null")
+      }
+    } else {
+      sb.append(value)
+    }
   }
 
   /**
@@ -144,9 +150,12 @@ class JsonTextBuilder private constructor() {
   /**
    * Append next number text [value]
    */
-  fun nextNumberText(value: String) {
+  fun nextNumberText(value: String?, skipNull: Boolean = false) {
+    if (skipNull && value == null) {
+      return
+    }
     sb.nextItem()
-    numberText(value)
+    numberText(value, skipNull = false)
   }
 
   /**
@@ -221,12 +230,15 @@ class JsonTextBuilder private constructor() {
   /**
    * Append number text [value] with [key]
    */
-  fun numberText(key: String, value: String) {
+  fun numberText(key: String, value: String?, skipNull: Boolean = false) {
+    if (skipNull && value == null) {
+      return
+    }
     sb
       .appendQuoteText(key)
       .nextValue()
 
-    numberText(value)
+    numberText(value, skipNull = false)
   }
 
   /**
@@ -303,13 +315,16 @@ class JsonTextBuilder private constructor() {
   /**
    * Append next number text [value] with [key]
    */
-  fun nextNumberText(key: String, value: String) {
+  fun nextNumberText(key: String, value: String?, skipNull: Boolean = false) {
+    if (skipNull && value == null) {
+      return
+    }
     sb
       .nextItem()
       .appendQuoteText(key)
       .nextValue()
 
-    numberText(value)
+    numberText(value, skipNull = false)
   }
 
   /**
