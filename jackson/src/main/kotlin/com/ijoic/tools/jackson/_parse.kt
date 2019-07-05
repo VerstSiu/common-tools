@@ -79,7 +79,7 @@ fun JsonNode.verifyAsArray(): JsonNode? {
 /**
  * Verify current node as items list
  */
-fun <T> JsonNode.verifyAsItemsList(mapValue: (JsonNode) -> T?, limit: Int? = null): List<T>? {
+fun <T> JsonNode.verifyAsItemsList(limit: Int? = null, mapValue: (JsonNode) -> T?): List<T>? {
   if (!this.isArray) {
     return null
   }
@@ -145,8 +145,8 @@ fun JsonNode.verifyAsArray(field: String): JsonNode? {
 /**
  * Verify [field] node as items list
  */
-fun <T> JsonNode.verifyAsItemsList(field: String, mapValue: (JsonNode) -> T?, limit: Int?): List<T>? {
-  return get(field)?.verifyAsItemsList(mapValue, limit)
+fun <T> JsonNode.verifyAsItemsList(field: String, limit: Int?, mapValue: (JsonNode) -> T?): List<T>? {
+  return get(field)?.verifyAsItemsList(limit, mapValue)
 }
 
 /* -- field node extensions :end -- */
