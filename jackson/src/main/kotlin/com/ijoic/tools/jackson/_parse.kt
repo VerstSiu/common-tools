@@ -3,6 +3,7 @@ package com.ijoic.tools.jackson
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.lang.Exception
+import kotlin.math.min
 
 /**
  * Parse current text to json node or null
@@ -78,11 +79,15 @@ fun JsonNode.verifyAsArray(): JsonNode? {
 /**
  * Verify current node as items list
  */
-fun <T> JsonNode.verifyAsItemsList(mapValue: (JsonNode) -> T?): List<T>? {
+fun <T> JsonNode.verifyAsItemsList(mapValue: (JsonNode) -> T?, limit: Int? = null): List<T>? {
   if (!this.isArray) {
     return null
   }
-  val itemSize = this.size().takeIf { it >= 0 } ?: return null
+  val itemSize = limit?.let { min(limit, this.size()) } ?: this.size()
+
+  if (itemSize <= 0) {
+    return null
+  }
   val items = mutableListOf<T>()
 
   if (itemSize > 0) {
@@ -140,8 +145,8 @@ fun JsonNode.verifyAsArray(field: String): JsonNode? {
 /**
  * Verify [field] node as items list
  */
-fun <T> JsonNode.verifyAsItemsList(field: String, mapValue: (JsonNode) -> T?): List<T>? {
-  return get(field)?.verifyAsItemsList(mapValue)
+fun <T> JsonNode.verifyAsItemsList(field: String, mapValue: (JsonNode) -> T?, limit: Int?): List<T>? {
+  return get(field)?.verifyAsItemsList(mapValue, limit)
 }
 
 /* -- field node extensions :end -- */
