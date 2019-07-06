@@ -1,15 +1,29 @@
 
 # Common Tools
 
+[![](https://jitpack.io/v/VerstSiu/common-tools.svg)](https://jitpack.io/#VerstSiu/common-tools)
+
 Kotlin based common tools.
 
 ## Get Start
 
-* Add library dependency:
+* Add it in your root build.gradle at the end of repositories:
+
+    ```gradle
+    allprojects {
+        repositories {
+            ...
+            maven { url 'https://jitpack.io' }
+        }
+    }
+    ```
+
+* Add the dependency:
 
     ```gradle
     dependencies {
-        implementation ''
+        implementation 'com.github.VerstSiu.common-tools:jackson:1.0'
+        implementation 'com.github.VerstSiu.common-tools:tools:1.0'
     }
     ```
 
