@@ -19,55 +19,76 @@ package com.ijoic.tools.jackson
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ijoic.tools.catchError
+import com.ijoic.tools.mapFileInput
+import com.ijoic.tools.mapResInput
 
 private val mapper = ObjectMapper()
 
 /**
- * Parse current string to expected [clazz] entity
+ * Parse current path to entity
  *
  * @author verstsiu created at 2019-02-13 10:19
  */
-fun <T> String.toEntity(clazz: Class<T>, onError: ((Throwable) -> Unit)? = null): T? {
-  return try {
-    mapper.readValue(this, clazz)
-  } catch (t: Throwable) {
-    dispatchParseError(t, onError)
-    null
+fun <T> String.toEntity(clazz: Class<T>, ignoreError: Boolean = false): T? {
+  catchError(ignoreError) {
+    return mapper.readValue(this, clazz)
+  }
+  return null
+}
+
+/**
+ * Parse current path to entity items
+ *
+ * @author verstsiu created at 2019-02-13 10:19
+ */
+inline fun <reified T> String.toEntityItems(ignoreError: Boolean = false): List<T>? {
+  catchError(ignoreError) {
+    return ObjectMapper().readValue(this, object: TypeReference<List<T>>() {})
+  }
+  return null
+}
+
+/**
+ * Parse current path to file entity
+ *
+ * @author verstsiu created at 2019-07-10 22:57
+ */
+fun <T> String.toFileEntity(clazz: Class<T>, ignoreError: Boolean = false): T? {
+  return mapFileInput(ignoreError) {
+    mapper.readValue(it, clazz)
   }
 }
 
 /**
- * Parse current string to entity items
+ * Parse current path to file entity items
  *
- * @author verstsiu created at 2019-02-13 10:19
+ * @author verstsiu created at 2019-07-10 22:57
  */
-inline fun <reified T> String.toEntityItems(): List<T>? {
-  return try {
-    ObjectMapper().readValue(this, object: TypeReference<List<T>>() {})
-  } catch (t: Throwable) {
-    t.printStackTrace()
-    null
+inline fun <reified T> String.toFileEntityItems(ignoreError: Boolean = false): List<T>? {
+  return mapFileInput(ignoreError) {
+    ObjectMapper().readValue(it, object: TypeReference<List<T>>() {})
   }
 }
 
 /**
- * Parse current string to entity items
+ * Parse current path to res entity
  *
- * @author verstsiu created at 2019-02-13 10:37
+ * @author verstsiu created at 2019-07-10 22:57
  */
-inline fun <reified T> String.toEntityItems(onError: (Throwable) -> Unit): List<T>? {
-  return try {
-    ObjectMapper().readValue(this, object: TypeReference<List<T>>() {})
-  } catch (t: Throwable) {
-    onError.invoke(t)
-    null
+fun <T> String.toResEntity(clazz: Class<T>, ignoreError: Boolean = false): T? {
+  return mapResInput(ignoreError) {
+    mapper.readValue(it, clazz)
   }
 }
 
-private fun dispatchParseError(t: Throwable, onError: ((Throwable) -> Unit)?) {
-  if (onError == null) {
-    t.printStackTrace()
-  } else {
-    onError.invoke(t)
+/**
+ * Parse current path to res entity items
+ *
+ * @author verstsiu created at 2019-07-10 22:57
+ */
+inline fun <reified T> String.toResEntityItems(ignoreError: Boolean = false): List<T>? {
+  return mapResInput(ignoreError) {
+    ObjectMapper().readValue(it, object: TypeReference<List<T>>() {})
   }
 }
