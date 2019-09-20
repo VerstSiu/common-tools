@@ -1,16 +1,12 @@
 package com.ijoic.tools.jackson
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import java.lang.Exception
 import kotlin.math.min
 
 /**
  * Parse current text to json node or null
  */
 fun String.toJsonNodeOrNull(ignoreError: Boolean = false): JsonNode? {
-  val mapper = ObjectMapper()
-
   return try {
     mapper.readTree(this)
   } catch (e: Exception) {

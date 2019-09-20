@@ -23,7 +23,7 @@ import com.ijoic.tools.catchError
 import com.ijoic.tools.mapFileInput
 import com.ijoic.tools.mapResInput
 
-private val mapper = ObjectMapper()
+internal val mapper = ObjectMapper()
 
 /**
  * Parse current path to entity
