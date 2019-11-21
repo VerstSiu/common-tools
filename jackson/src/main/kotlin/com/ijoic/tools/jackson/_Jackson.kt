@@ -92,3 +92,15 @@ inline fun <reified T> String.toResEntityItems(ignoreError: Boolean = false): Li
     ObjectMapper().readValue(it, object: TypeReference<List<T>>() {})
   }
 }
+
+/**
+ * Parse current entity to json text
+ *
+ * @author verstsiu created at 2019-11-21 14:59
+ */
+fun <T: Any> T.toJsonText(ignoreError: Boolean = false): String? {
+  catchError(ignoreError) {
+    return mapper.writeValueAsString(this)
+  }
+  return null
+}
